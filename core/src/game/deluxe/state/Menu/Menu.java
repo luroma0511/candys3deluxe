@@ -244,13 +244,6 @@ public class Menu {
                 24, 666);
     }
 
-    private float characterPan(float value, float mouseCoord, int length){
-        if (Float.isNaN(mouseCoord)) return value;
-        float target = (mouseCoord - (float) length / 2) * 0.1f;
-        float distance = (value - target) / 4;
-        return value - distance;
-    }
-
     private void fontAlpha(BitmapFont font, float alpha, boolean tweak){
         if (tweak){
             alpha = 0.5f + alpha / 2;
