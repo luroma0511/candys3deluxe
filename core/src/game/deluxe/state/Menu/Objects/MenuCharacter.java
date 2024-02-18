@@ -3,6 +3,7 @@ package game.deluxe.state.Menu.Objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import game.engine.Candys3Deluxe;
 import game.engine.util.Engine;
 import game.engine.util.ImageManager;
 import game.engine.util.RenderManager;
@@ -24,9 +25,9 @@ public class MenuCharacter extends SpriteObject {
         this.captionID = captionID;
     }
 
-    public void update(Engine engine, Caption caption, float characterPanX, float characterPanY, boolean focus){
-        setX(initX - characterPanX);
-        setY(initY - characterPanY);
+    public void update(Engine engine, Caption caption, InputManager inputManager, boolean focus){
+        setX(characterPan(getX(), inputManager.getX(), Candys3Deluxe.width));
+        setY(characterPan(getY(), inputManager.getY(), Candys3Deluxe.height);
 
         hovered = mouseOver(engine, true) && focus;
 
@@ -52,8 +53,15 @@ public class MenuCharacter extends SpriteObject {
             boxRegion.setRegion(0, 0, (int) (getWidth() / 2), (int) (getHeight() / 1.5f));
         }
         batch.setColor(1, 0, 0, 0.5f);
-        batch.draw(boxRegion, getX() + getWidth() / 4, getY() + getHeight() / 4);
+        batch.draw(boxRegion, initX - getX() + getWidth() / 4, initY - getY() + getHeight() / 4);
         renderManager.restoreColor(batch);
+    }
+
+    private float characterPan(float value, float mouseCoord, int length){
+        if (Float.isNaN(mouseCoord)) return value;
+        float target = (mouseCoord - (float) length / 2) * 0.1f;
+        float distance = (value - target) / 4;
+        return value - distance;
     }
 
     public boolean isHovered() {
