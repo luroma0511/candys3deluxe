@@ -39,7 +39,4 @@ public class GameData {
     public byte getShadowCatAI() {
         return shadowCatAI;
     }
-
-    public void writeData(byte nightSelection, byte ai, int catAI, int vinnieAI, int shadowRatAI, int shadowCatAI) {
-    }
 }
