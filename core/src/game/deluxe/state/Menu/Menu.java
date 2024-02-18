@@ -21,8 +21,6 @@ import game.engine.util.SoundManager;
 public class Menu {
     private byte nightSelection = 1;
     private float staticAnimation;
-    private float characterPanX;
-    private float characterPanY;
 
     private final MenuCharacter shadowRat;
     private final MenuCharacter shadowCat;
@@ -64,9 +62,6 @@ public class Menu {
             playMenu = true;
         }
 
-        characterPanX = characterPan(characterPanX, engine.getInputManager().getX(), Candys3Deluxe.width);
-        characterPanY = characterPan(characterPanY, engine.getInputManager().getY(), Candys3Deluxe.height);
-
         staticAnimation = engine.increaseTimeValue(staticAnimation, 8, 30);
         if (staticAnimation == 8) {
             staticAnimation = 0;
@@ -88,8 +83,8 @@ public class Menu {
         }
 
         caption.setActive(false);
-        shadowRat.update(engine, caption, characterPanX, characterPanY, !optionButton.isHovered() && !optionButton.isSelected() && !playButton.isSelected());
-        shadowCat.update(engine, caption, characterPanX, characterPanY, !playButton.isHovered() && !optionButton.isSelected() && !playButton.isSelected());
+        shadowRat.update(engine, caption, engine.getInputManager(), !optionButton.isHovered() && !optionButton.isSelected() && !playButton.isSelected());
+        shadowCat.update(engine, caption, engine.getInputManager(), !playButton.isHovered() && !optionButton.isSelected() && !playButton.isSelected());
 
         caption.update(engine);
     }
