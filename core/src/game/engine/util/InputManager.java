@@ -9,6 +9,7 @@ public class InputManager extends InputAdapter {
     float scrolledAmount;
     boolean pressed;
     boolean clickLock;
+    boolean f2;
 
     public boolean mouseOver(float x, float y, float width, float height){
         return mouseOverExact(x, y, x + width, y + height);
@@ -39,6 +40,10 @@ public class InputManager extends InputAdapter {
 
     public boolean isPressed() {
         return pressed;
+    }
+
+    public boolean isF2() {
+        return f2;
     }
 
     public float getX() {

@@ -2,6 +2,7 @@ package game.engine;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,6 +19,7 @@ public class Candys3Deluxe extends ApplicationAdapter {
 	private SoundManager soundManager;
 	private ScheduledExecutorService engineTimer;
 	private Engine engine;
+	private Graphics.DisplayMode displayMode;
 	public static int width;
 	public static int height;
 
@@ -42,6 +44,8 @@ public class Candys3Deluxe extends ApplicationAdapter {
 		engine.setInputManager(inputManager);
 		engineTimer = Executors.newSingleThreadScheduledExecutor();
 		engineTimer.scheduleAtFixedRate(() -> engine.update(soundManager), 0, 16, TimeUnit.MILLISECONDS);
+		displayMode = Gdx.graphics.getDisplayMode();
+		Gdx.graphics.setFullscreenMode(displayMode);
 	}
 
 	@Override

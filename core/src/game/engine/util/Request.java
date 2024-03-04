@@ -31,9 +31,7 @@ public class Request {
     }
 
     public boolean imagesIsEmpty(){
-        if (!imagesEmptyLock && imageRequests.isEmpty()){
-            imagesEmptyLock = true;
-        }
+        if (!imagesEmptyLock && imageRequests.isEmpty()) imagesEmptyLock = true;
         return imagesEmptyLock;
     }
 
@@ -51,9 +49,7 @@ public class Request {
     }
 
     public boolean soundsIsEmpty(){
-        if (!soundsEmptyLock && soundRequests.isEmpty()){
-            soundsEmptyLock = true;
-        }
+        if (!soundsEmptyLock && soundRequests.isEmpty()) soundsEmptyLock = true;
         return soundsEmptyLock;
     }
 

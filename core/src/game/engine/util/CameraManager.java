@@ -13,16 +13,20 @@ public class CameraManager {
         final OrthographicCamera camera = new OrthographicCamera(width, height);
         camera.setToOrtho(false);
         viewport = new FitViewport(width, height, camera);
-//        viewport.getCamera().translate((float) (width / 2), (float) (height / 2), 0);
         viewport.getCamera().update();
         viewport.update(width, height);
         viewport.apply();
     }
+
     public void translate(float x, float y){
         viewport.getCamera().translate(x, y, 0);
         this.x += x;
         this.y += y;
         viewport.getCamera().update();
+    }
+
+    public void setOrigin(){
+        if (x != 0 || y != 0) translate(-x, -y);
     }
 
     public Viewport getViewport() {

@@ -29,6 +29,10 @@ public abstract class SpriteObject {
         return engine.getInputManager().mouseOver(x, y, width, height);
     }
 
+    public boolean mouseOverWithPanning(float mx, float my){
+        return mx >= x && mx <= x + width && my >= y && my <= y + height;
+    }
+
     public String getPath() {
         return sb.toString();
     }

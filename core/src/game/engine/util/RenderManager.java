@@ -1,8 +1,6 @@
 package game.engine.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -15,16 +13,17 @@ public class RenderManager {
     private final ImageManager imageManager;
     private final VideoManager videoManager;
     private final FrameBufferManager frameBufferManager;
+    private final ShapeManager shapeManager;
     private final CameraManager cameraManager;
     private InputManager inputManager;
 
     public RenderManager(int width, int height){
         batch = new SpriteBatch();
+        shapeManager = new ShapeManager();
         fontManager = new FontManager();
         imageManager = new ImageManager();
         videoManager = new VideoManager();
         frameBufferManager = new FrameBufferManager();
-        frameBufferManager.createShapes(batch, imageManager);
         cameraManager = new CameraManager(width, height);
     }
 
@@ -56,11 +55,14 @@ public class RenderManager {
 
     public void render(Engine engine){
         if (engine.getRequest().isNow()) return;
-        int state = engine.getStateManager().getPreviousGameState();
+        int state = engine.getStateManager().getPrevState();
         ScreenUtils.clear(0, 0, 0, 1);
 
         if (state == 0){
+            frameBufferManager.begin(false);
             engine.getStateManager().getMenu().render(this);
+            frameBufferManager.end(batch, false, true);
+            frameBufferManager.render(batch, cameraManager, false);
         } else {
             engine.getStateManager().getGame().render(this);
         }
@@ -99,6 +101,10 @@ public class RenderManager {
 
     public VideoManager getVideoManager() {
         return videoManager;
+    }
+
+    public ShapeManager getShapeManager() {
+        return shapeManager;
     }
 
     public FrameBufferManager getFrameBufferManager() {

@@ -10,7 +10,6 @@ public class AudioClass {
 
     public AudioClass(Sound sound) {
         this.sound = sound;
-        resetValues();
     }
 
     public void resetValues(){
@@ -20,21 +19,17 @@ public class AudioClass {
     }
 
     public void play(){
-        if (soundID != -1){
-            stop();
-        }
+        if (soundID != -1) stop();
+        resetValues();
         soundID = sound.play(volume);
     }
 
     public void stop(){
-        if (soundID == -1) return;
-        sound.stop(soundID);
-        resetValues();
+        if (soundID != -1) sound.stop(soundID);
     }
 
     public void setLoop(boolean loop){
-        if (soundID == -1) return;
-        sound.setLooping(soundID, loop);
+        if (soundID != -1) sound.setLooping(soundID, loop);
     }
 
     public float getPitch() {

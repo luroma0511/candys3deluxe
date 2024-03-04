@@ -11,18 +11,12 @@ public class Button extends SpriteObject {
         super(path, x, y, width, height, alpha);
     }
 
-    public void update(Engine engine){
+    public void update(Engine engine, boolean alphaConfig){
         hovered = mouseOver(engine, false);
-
-        if (hovered || selected){
-            setAlpha(engine.increaseTimeValue(getAlpha(), 1, 8));
-        } else {
-            setAlpha(engine.decreaseTimeValue(getAlpha(), 0, 8));
-        }
-
-        if (hovered && engine.getInputManager().isPressed()){
-            selected = !selected;
-        }
+        if (hovered && engine.getInputManager().isPressed()) selected = !selected;
+        if (!alphaConfig) return;
+        if (hovered || selected) setAlpha(engine.increaseTimeValue(getAlpha(), 1, 8));
+        else setAlpha(engine.decreaseTimeValue(getAlpha(), 0, 8));
     }
 
     public boolean isSelected() {

@@ -1,6 +1,7 @@
 package game.engine.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
 
 public class ImageManager {
     private final Map<String, TextureRegion> textures;
@@ -19,7 +21,8 @@ public class ImageManager {
     public boolean loadingTextures(Request request){
         if (request.imagesIsEmpty()) return false;
         String path = request.getImage(0);
-        Texture texture = new Texture(Gdx.files.internal(path + ".png"));
+        FileHandle file = Gdx.files.absolute(DirectoryPath.getPath() + path + ".png");
+        Texture texture = new Texture(file);
         TextureRegion region = new TextureRegion(texture);
         textures.put(path, region);
         request.removeImage(0);

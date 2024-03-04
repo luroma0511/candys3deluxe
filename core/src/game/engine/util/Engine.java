@@ -1,5 +1,8 @@
 package game.engine.util;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+
 import game.api.DiscordRichPresenceAPI;
 import game.deluxe.state.StateManager;
 
@@ -8,6 +11,7 @@ public class Engine {
 
     private final StateManager stateManager;
     private InputManager inputManager;
+    private SoundManager soundManager;
     private final Request request;
     private float deltaTime;
     private long previousTime;
@@ -20,12 +24,12 @@ public class Engine {
     }
 
     public void update(SoundManager soundManager){
+        if (getSoundManager() == null) this.soundManager = soundManager;
         deltaTime = (float) (System.currentTimeMillis() - previousTime) / 1_000;
-        stateManager.update(this, soundManager);
+        inputManager.f2 = Gdx.input.isKeyJustPressed(Input.Keys.F2);
+        stateManager.update(this);
         previousTime = System.currentTimeMillis();
-        if (inputManager.pressed) {
-            inputManager.pressed = false;
-        }
+        if (inputManager.pressed) inputManager.pressed = false;
         inputManager.scrolled = false;
     }
 
@@ -57,6 +61,10 @@ public class Engine {
 
     public void setInputManager(InputManager inputManager) {
         this.inputManager = inputManager;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
     public Request getRequest() {

@@ -1,8 +1,8 @@
 package game.deluxe.state.Menu.Objects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,10 @@ import game.engine.util.SpriteObject;
 
 public class Caption extends SpriteObject {
     private final CaptionData captionData;
-    private TextureRegion boxRegion;
     private boolean active;
     private short previousID;
     private short ID;
+    private boolean change;
     private final List<String> captions;
 
     public Caption(){
@@ -41,37 +41,33 @@ public class Caption extends SpriteObject {
         captions.clear();
         String text = retrieveText();
         wordWrap(text, 40);
-        setWidth(0);
+        change = true;
         previousID = ID;
     }
 
     public void render(SpriteBatch batch, RenderManager renderManager, BitmapFont captionFont){
         if (getAlpha() == 0) return;
-        if (boxRegion == null){
-            boxRegion = new TextureRegion(renderManager.getFrameBufferManager().getTexture());
-        }
-        if (getWidth() == 0) {
-            for (String caption : captions) {
+        if (change) {
+            float width = 0;
+            for (String caption: captions) {
                 renderManager.getFontManager().getLayout().setText(captionFont, caption);
-                setWidth(Math.max(getWidth(), renderManager.getFontManager().getLayout().width));
+                width = Math.max(width, renderManager.getFontManager().getLayout().width);
             }
-            boxRegion.setRegion(0, 0, (int) getWidth() + 16, (int) getHeight() * captions.size() + 8);
+            setWidth(width);
+            change = false;
         }
-
         boolean leftSide = renderManager.getInputManager().getX() < (float) Candys3Deluxe.width / 2;
-
-        batch.setColor(0, 0, 0, getAlpha());
-
         float height = Math.max(0, renderManager.getInputManager().getY() - 24 * captions.size() - 4);
-        if (leftSide){
-            batch.draw(boxRegion, getX() + 8, height);
-        } else {
-            batch.draw(boxRegion, getX() - getWidth() - 32, height);
-        }
+        float x;
+        if (leftSide) x = getX() + 8;
+        else x = getX() - getWidth() - 32;
 
-        batch.setColor(1, 1, 1, 1);
+        Color color = new Color(0, 0, 0, getAlpha());
+        renderManager.getShapeManager().drawRect(batch, color,
+                x, height,
+                (int) getWidth() + 16, (int) getHeight() * captions.size() + 8);
+
         captionFont.setColor(1, 1, 1, getAlpha());
-
         for (byte i = 0; i < captions.size(); i++) {
             if (!leftSide) {
                 captionFont.draw(renderManager.getBatch(), captions.get(i),

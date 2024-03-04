@@ -1,13 +1,17 @@
 package game.deluxe.state.Game;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import game.deluxe.data.GameData;
 import game.deluxe.state.Game.Objects.Character.Characters;
 import game.deluxe.state.Game.Objects.Flashlight;
 import game.deluxe.state.Game.Objects.Player;
 import game.deluxe.state.Game.Objects.Room;
+import game.engine.Candys3Deluxe;
 import game.engine.util.Engine;
 import game.engine.util.InputManager;
 import game.engine.util.Request;
@@ -23,7 +27,7 @@ public class Game {
 
     public Game(){
         characters = new Characters();
-        player = new Player(2, 896, 152);
+        player = new Player(2.25f, 896, 152);
         flashlight = new Flashlight();
         room = new Room();
         reset = false;
@@ -62,22 +66,19 @@ public class Game {
         sb.delete(sb.indexOf("/") + 1, sb.length());
         prefix = sb.append("Moving/").toString();
 
-        for (int i = 1; i <= 10; i++){
-            request.addImageRequest(prefix + "Turn Around/Moving" + i);
-        }
-
-        for (int i = 1; i <= 10; i++){
-            request.addImageRequest(prefix + "Under Bed/Moving" + i);
-        }
-
         for (int i = 1; i <= 11; i++){
             request.addImageRequest(prefix + "Turn Back/Moving" + i);
+            if (i == 11) break;
+            request.addImageRequest(prefix + "Turn Around/Moving" + i);
+            request.addImageRequest(prefix + "Under Bed/Moving" + i);
         }
 
         prefix = sb.delete(sb.indexOf("/") + 1, sb.length()).toString();
         request.addImageRequest(prefix + "BattleOverlay");
         request.addImageRequest(prefix + "Clock");
         request.addImageRequest(prefix + "Flashlight");
+
+        for (String sounds: gameSoundData) request.addSoundRequest(sounds);
     }
 
     public void setNightState(byte nightState){
@@ -91,8 +92,14 @@ public class Game {
         }
         if (engine.getRequest().isNow()) return;
 
-        player.update(engine, engine.getInputManager());
-        characters.update(engine, flashlight);
+        if (engine.getInputManager().isF2()) {
+            engine.getStateManager().setState((byte) 0);
+            engine.getSoundManager().stopAllSounds();
+            return;
+        }
+        player.update(engine, room, engine.getInputManager());
+        room.update(engine);
+        characters.update(engine, player, room, flashlight);
     }
 
     public void reset(GameData gameData){
@@ -104,10 +111,6 @@ public class Game {
         player.reset();
     }
 
-    public void quit(){
-
-    }
-
     public void render(RenderManager renderManager){
         SpriteBatch batch = renderManager.getBatch();
         player.adjustCamera(flashlight, renderManager.getInputManager(), renderManager.getCameraManager());
@@ -116,7 +119,46 @@ public class Game {
         batch.enableBlending();
         batch.begin();
 
-        room.render(renderManager, characters, flashlight);
+        room.render(renderManager, characters, room, flashlight);
+
+        renderManager.getFrameBufferManager().render(batch, renderManager.getCameraManager(), true);
+        renderManager.getFrameBufferManager().begin(true);
+
+        if (player.getOverlayAlpha() > 0) {
+            int srcFunc = batch.getBlendSrcFunc();
+            int dstFunc = batch.getBlendDstFunc();
+            //DON'T CHANGE THIS!!!
+            batch.setBlendFunction(GL20.GL_SRC_COLOR, GL20.GL_DST_ALPHA);
+            TextureRegion region = renderManager.getImageManager().get("game/BattleOverlay");
+            batch.setColor(player.getOverlayAlpha(), player.getOverlayAlpha(), player.getOverlayAlpha(), 1);
+            batch.draw(region, renderManager.getCameraManager().getX(), renderManager.getCameraManager().getY(), 1280, 720);
+            renderManager.restoreColor(batch);
+            batch.setBlendFunction(srcFunc, dstFunc);
+        }
+
+        renderManager.getFrameBufferManager().end(batch, true, true);
+        renderManager.getFrameBufferManager().render(batch, renderManager.getCameraManager(), true);
+
+        Color color = new Color(0, 0, 0, 1 - player.getBlacknessAlpha());
+        renderManager.getShapeManager().drawRect(batch, color, 0, 0, 1280, 720);
+
+        color = new Color(0.2f, 0, 0.2f, player.getPurpleAlpha());
+        renderManager.getShapeManager().drawRect(batch, color, 0, 0, 1280, 720);
+
+        if (player.getButtonFade() > 0) {
+            batch.setColor(1, 1, 1, player.getButtonFade());
+            switch (room.getState()) {
+                case 0:
+                    TextureRegion region = renderManager.getImageManager().get("game/Buttons/TapePlayer");
+                    batch.draw(region, renderManager.getCameraManager().getX(), renderManager.getCameraManager().getY());
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+            }
+            renderManager.restoreColor(batch);
+        }
 
         debugRender(renderManager, renderManager.getFontManager().getDebugFont());
     }
@@ -124,26 +166,54 @@ public class Game {
     private void debugRender(RenderManager renderManager, BitmapFont debugFont){
         SpriteBatch batch = renderManager.getBatch();
         InputManager inputManager = renderManager.getInputManager();
-        renderManager.restoreColor(batch);
 
         debugFont.draw(batch,
                 "Mouse: " + (int) inputManager.getX() + " | " + (int) inputManager.getY(),
                 24 + renderManager.getCameraManager().getX(), 696 + renderManager.getCameraManager().getY());
 
-        debugFont.draw(batch,
-                "Panning: " + player.getX() + " | " + player.getY(),
-                24 + renderManager.getCameraManager().getX(), 666 + renderManager.getCameraManager().getY());
+        if (characters.getRat() != null && true){
+            debugFont.draw(batch,
+                    "Rat side: " + characters.getRat().getSide(),
+                    24 + renderManager.getCameraManager().getX(), 666 + renderManager.getCameraManager().getY());
+
+            Color color = new Color(0.2f, 0.2f, 0.2f, 1);
+            renderManager.getShapeManager().drawRect(batch, color,
+                    (float) Candys3Deluxe.width / 4,
+                    50,
+                    640,
+                    50);
+
+            color = new Color(0.75f, 0, 0, 1);
+            renderManager.getShapeManager().drawRect(batch, color,
+                    (float) Candys3Deluxe.width / 4,
+                    50,
+                    (int) (characters.getRat().getAttackHealth() * 640),
+                    50);
+
+            color = new Color(0.75f, 0.5f, 0.5f, 0.5f);
+            renderManager.getShapeManager().drawCircle(batch, color,
+                    characters.getRat().getHitbox().getX() - renderManager.getCameraManager().getX(),
+                    characters.getRat().getHitbox().getY() - renderManager.getCameraManager().getY(),
+                    characters.getRat().getHitbox().size);
+        }
     }
 
-    public void roomRender(RenderManager renderManager){
-
-    }
-
-    public void bedRender(RenderManager renderManager){
-
-    }
-
-    public void tapeRender(RenderManager renderManager){
-
-    }
+    private final String[] gameSoundData = new String[] {
+            "attack_begin",
+            "attack",
+            "bed",
+            "crawl",
+            "spotted",
+            "knock",
+            "hard_knock",
+            "knockLeft",
+            "hard_knockLeft",
+            "knockRight",
+            "hard_knockRight",
+            "peek",
+            "get_in",
+            "twitch",
+            "dodge",
+            "thunder"
+    };
 }
