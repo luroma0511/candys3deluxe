@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.FileHandler;
 
 public class ImageManager {
     private final Map<String, TextureRegion> textures;
@@ -21,7 +20,7 @@ public class ImageManager {
     public boolean loadingTextures(Request request){
         if (request.imagesIsEmpty()) return false;
         String path = request.getImage(0);
-        FileHandle file = Gdx.files.absolute(DirectoryPath.getPath() + path + ".png");
+        FileHandle file = Gdx.files.absolute(JavaInfo.getPath() + path + ".png");
         Texture texture = new Texture(file);
         TextureRegion region = new TextureRegion(texture);
         textures.put(path, region);

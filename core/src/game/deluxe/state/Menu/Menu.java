@@ -15,6 +15,7 @@ import game.engine.Candys3Deluxe;
 import game.engine.util.CameraManager;
 import game.engine.util.Engine;
 import game.engine.util.InputManager;
+import game.engine.util.JavaInfo;
 import game.engine.util.RenderManager;
 import game.engine.util.Request;
 
@@ -237,6 +238,14 @@ public class Menu {
         debugFont.draw(batch,
                 "Mouse: " + (int) inputManager.getX() + " | " + (int) inputManager.getY(),
                 24, 696);
+
+        debugFont.draw(batch,
+                "Java path: " + JavaInfo.getJavaPath(),
+                24, 666);
+
+        debugFont.draw(batch,
+                "Java version: " + JavaInfo.getJre(),
+                24, 636);
     }
 
     private void fontAlpha(BitmapFont font, float alpha, boolean tweak){

@@ -15,8 +15,8 @@ public class FontManager {
 
     public FontManager(){
         layout = new GlyphLayout();
-        FreeTypeFontGenerator generator1 = new FreeTypeFontGenerator(Gdx.files.absolute(DirectoryPath.getPath() + "fonts\\candysFont.ttf"));
-        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.absolute(DirectoryPath.getPath() + "fonts\\captionFont.ttf"));
+        FreeTypeFontGenerator generator1 = new FreeTypeFontGenerator(Gdx.files.absolute(JavaInfo.getPath() + "fonts\\candysFont.ttf"));
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.absolute(JavaInfo.getPath() + "fonts\\captionFont.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         debugFont = initializeFont(generator2, parameter, 20);

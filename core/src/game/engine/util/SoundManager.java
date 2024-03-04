@@ -18,7 +18,7 @@ public class SoundManager {
         if (request.soundsIsEmpty()) return false;
         String path = request.getSound(0);
         if (!audios.containsKey(path)) {
-            FileHandle file = Gdx.files.absolute(DirectoryPath.getPath() + "sounds\\" + path + ".wav");
+            FileHandle file = Gdx.files.absolute(JavaInfo.getPath() + "sounds\\" + path + ".wav");
             Sound sound = Gdx.audio.newSound(file);
             AudioClass audioClass = new AudioClass(sound);
             audios.put(path, audioClass);
