@@ -5,7 +5,7 @@ java {
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "game.deluxe.DesktopLauncher"
+project.ext.mainClassName = "DesktopLauncher"
 
 import org.gradle.internal.os.OperatingSystem
 
