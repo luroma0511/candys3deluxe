@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: DesktopLauncher
+Class-Path: dependencies/dependencies.jar
+
