@@ -10,7 +10,7 @@ public class JavaInfo {
     private static final String jre = System.getProperty("java.version");
 
     public static void fixPath() {
-        while (!projectDir.getFileName().toString().equals("candys3deluxe")){
+        while (!projectDir.getFileName().toString().equals("game")){
             projectDir = projectDir.getParent();
         }
         path = projectDir.resolve("assets") + "\\";
